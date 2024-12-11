@@ -1,0 +1,6 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');*/
+.custom-font {
+    font-family: 'Inter', sans-serif; /* Replace 'YourFontFamily' with the desired font family */
+    font-size: 18px; /* Adjust the font size as needed */
+    font-weight: normal; /* Adjust the font weight as needed */
+  }

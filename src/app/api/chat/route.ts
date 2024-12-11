@@ -35,6 +35,9 @@ export async function POST(req: Request) {
         return new Response(JSON.stringify({ error: 'Failed to extract content from the website' }), { status: 500 });
       }
     }
+    else {
+      console.log('No URL provided');
+    }
 
 
     // LLM Response
@@ -47,7 +50,8 @@ export async function POST(req: Request) {
       model: 'llama3-8b-8192',
     });
 
-    const response = llmResponse.choices[0].message.content;
+    let response = llmResponse.choices[0].message.content;
+    response = response ? response.trim() : '';
 
     console.log('Chat completion:', response);
 

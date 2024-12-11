@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from "remark-gfm";
+import { Inter } from "@next/font/google";
+import '../../styles.css'; // Ensure you import your CSS file
 
 type Message = {
   role: "user" | "ai";
@@ -75,11 +79,16 @@ export default function Home() {
               <div
                 className={`px-4 py-2 rounded-2xl max-w-[80%] ${
                   msg.role === "ai"
-                    ? "bg-gray-800 border border-gray-700 text-gray-100"
+                    ? "bg-blue-950 border border-gray-700 text-gray-100"
                     : "bg-cyan-600 text-white ml-auto"
-                }`}
+                } custom-font`}
+                style={{ whiteSpace: 'pre-wrap' }}
               >
-                {msg.content}
+                {msg.role === 'ai' ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                ) : (
+                  <p>{msg.content}</p>
+                )}
               </div>
             </div>
           ))}
