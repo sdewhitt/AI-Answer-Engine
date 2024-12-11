@@ -32,9 +32,13 @@ export default function Home() {
         body: JSON.stringify({ message }),
       });
 
-      // TODO: Handle the response from the chat API to display the AI response in the UI
+      // Handle the response from the chat API to display the AI response in the UI
 
+      const data = await response.json();
 
+      // Add AI response to the conversation
+      const aiMessage: Message = { role: 'ai', content: data.message };
+      setMessages((prev) => [...prev, aiMessage]);
 
 
     } catch (error) {

@@ -18,8 +18,17 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log('Request body:', body);
 
-    const systemPrompt = 'Be concise but have emotions.';
+    // Check if the message is empty
+    if (!body.message) {
+      return new Response(JSON.stringify({ error: 'Message is empty' }), { status: 400 });
+    }
 
+    // Scrape relevant websites
+
+    // Process/Parse content
+
+    // LLM Response
+    const systemPrompt = 'Be concise but have emotions.';
     const llmResponse = await client.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
@@ -32,11 +41,13 @@ export async function POST(req: Request) {
 
     console.log('Chat completion:', response);
 
-    return Response.json({ message: 'POST request received' });
+    return new Response(JSON.stringify({ message: response }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
     console.error('Error in POST request:', error);
-  } finally {
-    //console.log('POST request handling completed');
+    return new Response(JSON.stringify({ error: error }), { status: 500 });
   }
 }
 
