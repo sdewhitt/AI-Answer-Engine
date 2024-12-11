@@ -3,8 +3,10 @@
 import { useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from "remark-gfm";
-import { Inter } from "@next/font/google";
 import '../../styles.css'; // Ensure you import your CSS file
+import Link from 'next/link';
+import CustomMarkdown from "./CustomMarkdown";
+
 
 type Message = {
   role: "user" | "ai";
@@ -85,7 +87,7 @@ export default function Home() {
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {msg.role === 'ai' ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                  <CustomMarkdown content={msg.content} />
                 ) : (
                   <p>{msg.content}</p>
                 )}
