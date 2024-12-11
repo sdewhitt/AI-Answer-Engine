@@ -4,15 +4,39 @@
 // Refer to the Cheerio docs here on how to parse HTML: https://cheerio.js.org/docs/basics/loading
 // Refer to Puppeteer docs here: https://pptr.dev/guides/what-is-puppeteer
 
+import Groq from 'groq-sdk';
+
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+})
+
 export async function POST(req: Request) {
   try {
+    //console.log('POST request received:', req);
 
+    // Read and parse the request body
+    const body = await req.json();
+    console.log('Request body:', body);
 
+    const systemPrompt = 'Be concise but have emotions.';
+
+    const llmResponse = await client.chat.completions.create({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: body.message }
+      ],
+      model: 'llama3-8b-8192',
+    });
+
+    const response = llmResponse.choices[0].message.content;
+
+    console.log('Chat completion:', response);
+
+    return Response.json({ message: 'POST request received' });
   } catch (error) {
-
-
+    console.error('Error in POST request:', error);
   } finally {
-    
+    //console.log('POST request handling completed');
   }
 }
 
