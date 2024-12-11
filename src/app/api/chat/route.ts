@@ -11,5 +11,23 @@ export async function POST(req: Request) {
   } catch (error) {
 
 
+  } finally {
+    
   }
+}
+
+
+// Caching
+export const dynamic = 'force-static'
+ 
+export async function GET() {
+  const res = await fetch('https://data.mongodb-api.com/...', {
+    headers: new Headers([
+      ['Content-Type', 'application/json'],
+      ['API-Key', process.env.DATA_API_KEY || ''],
+    ]),
+  })
+  const data = await res.json()
+ 
+  return Response.json({ data })
 }
