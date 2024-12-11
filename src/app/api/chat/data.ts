@@ -1,23 +1,18 @@
 // FILE: api/data.ts
 
-import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { NextApiRequest, NextApiResponse } from 'next'
+import clientPromise from '../../lib/mongodb'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await fetch('https://data.mongodb-api.com/...', {
-      headers: new Headers([
-        ['Content-Type', 'application/json'],
-        ['API-Key', process.env.DATA_API_KEY || ''],
-      ]),
-    })
+    const client = await clientPromise
+    const db = client.db('your-database-name')
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`)
-    }
+    const data = await db.collection('your-collection-name').find({}).toArray()
 
-    const data = await response.json()
     res.status(200).json({ data })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: 'Failed to fetch data' })
   }
 }
