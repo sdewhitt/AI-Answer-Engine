@@ -5,6 +5,9 @@
 // Refer to Puppeteer docs here: https://pptr.dev/guides/what-is-puppeteer
 
 import Groq from 'groq-sdk';
+import puppeteer from 'puppeteer';
+import * as cheerio from 'cheerio';
+
 
 const client = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -18,17 +21,24 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log('Request body:', body);
 
+    const {message, url} = body;
     // Check if the message is empty
-    if (!body.message) {
+    if (!message) {
       return new Response(JSON.stringify({ error: 'Message is empty' }), { status: 400 });
     }
 
-    // Scrape relevant websites
+    if (url) {
+      // Scrape relevant websites
+      const scrapedData = await scrapeWebsite(url);
+  
+      if (!scrapedData.content) {
+        return new Response(JSON.stringify({ error: 'Failed to extract content from the website' }), { status: 500 });
+      }
+    }
 
-    // Process/Parse content
 
     // LLM Response
-    const systemPrompt = 'Be concise but have emotions.';
+    const systemPrompt = 'Be concise.';
     const llmResponse = await client.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
@@ -51,6 +61,41 @@ export async function POST(req: Request) {
   }
 }
 
+// Function to scrape website content
+async function scrapeWebsite(url: string) {
+  // Launch Puppeteer
+  const browser = await puppeteer.launch({
+    headless: true, // Run in headless mode
+    args: ['--no-sandbox', '--disable-setuid-sandbox'], // Necessary for certain hosting environments
+  });
+
+  try {
+    const page = await browser.newPage();
+
+    // Navigate to the provided URL
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+    // Get the HTML content of the page
+    const html = await page.content();
+
+    // Parse the HTML using Cheerio
+    const $ = cheerio.load(html);
+
+    // Extract the title and main content
+    const title = $('title').text();
+    const content = $('p')
+      .map((i, el) => $(el).text())
+      .get()
+      .join(' ');
+
+    return { title, content };
+  } catch (error) {
+    console.error('Error during web scraping:', error);
+    throw new Error('Failed to scrape website');
+  } finally {
+    await browser.close();
+  }
+}
 
 // Caching
 export const dynamic = 'force-static'
