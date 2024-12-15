@@ -39,7 +39,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }), //body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ messages: [...messages, userMessage] }), //body: JSON.stringify({ message }), //
       });
 
       // Handle the response from the chat API to display the AI response in the UI
@@ -59,14 +59,14 @@ export default function Home() {
   };
 
 
-  // TODO: Modify the color schemes, fonts, and UI as needed for a good user experience
-  // Refer to the Tailwind CSS docs here: https://tailwindcss.com/docs/customizing-colors, and here: https://tailwindcss.com/docs/hover-focus-and-other-states
+  
+  //Tailwind CSS docs: https://tailwindcss.com/docs/customizing-colors, https://tailwindcss.com/docs/hover-focus-and-other-states
   return (
     <div className="flex flex-col h-screen bg-gray-900">
       {/* Header */}
       <div className="w-full bg-gray-800 border-b border-gray-700 p-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-xl font-semibold text-white">Chat</h1>
+          <h1 className="text-xl font-semibold text-white">ChatSD</h1>
         </div>
       </div>
 
@@ -85,9 +85,10 @@ export default function Home() {
               <div
                 className={`px-4 py-2 rounded-2xl max-w-[80%] ${
                   msg.role === "ai"
-                    ? "bg-blue-950 border border-gray-700 text-gray-100"
-                    : "bg-cyan-600 text-white ml-auto"
+                    ? "bg-violet-950 border border-rose-500 text-gray-100"
+                    : "bg-slate-800 border border-violet-500 text-white ml-auto"
                 } custom-font`}
+                //style = {{ borderColor: msg.role === "ai" ? 'rgb(190, 18, 60)' : 'rgb(44, 15, 92)' }}
                 //style={{ whiteSpace: 'pre-wrap' }}
               >
                 {msg.role === 'ai' ? (
