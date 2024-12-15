@@ -130,7 +130,7 @@ export default function Home() {
               >
                 {msg.role === 'ai' ? (
                   <>
-                    <CustomMarkdown content={msg.content} />
+                    <CustomMarkdown content={msg.content || "No content available"} />
                     {msg.links && msg.links.length > 0 && (
                       <div className="mt-4 space-y-2">
                         {msg.links.map((link, i) => (
