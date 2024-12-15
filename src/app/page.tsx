@@ -38,7 +38,7 @@ export default function Home() {
         .then((res) => res.json())
         .then((data) => setMessages(data.conversation || []));
     }
-  }, [searchParams]);
+  }, []);
 
   const handleSend = async () => {
     if (!message.trim()) return;
