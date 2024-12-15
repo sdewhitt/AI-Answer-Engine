@@ -20,13 +20,13 @@ export async function POST(req: Request) {
     // Read and parse the request body
     const body = await req.json();
     console.log('Request:', body.message);
-    const { messages } = body; // Expecting the full message history
+    /*const { messages } = body; // Expecting the full message history
     if (!messages || !Array.isArray(messages)) {
       return new Response(
         JSON.stringify({ error: "Invalid or missing message history" }),
         { status: 400 }
       );
-    }
+    }*/
     
     const {message, url} = body;
     // Check if the message is empty
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     // Build the conversation history for the LLM
     const conversation = [
       { role: "system", content: systemPrompt },
-      ...messages, // Include all past messages
+      //...messages, // Include all past messages
       { role: "user", content: userPrompt }, // Add the new user prompt
     ];
 
