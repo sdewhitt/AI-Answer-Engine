@@ -28,11 +28,11 @@ export default function Home() {
   const [isShareBoxVisible, setIsShareBoxVisible] = useState(true);
   
 
-  const searchParams = useSearchParams();
+
 
 
   useEffect(() => {
-    
+    const searchParams = useSearchParams();
     const id = searchParams.get('id');
     if (id) {
       fetch(`/api/get-conversation?id=${id}`)
