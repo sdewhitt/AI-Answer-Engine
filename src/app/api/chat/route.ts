@@ -20,7 +20,14 @@ export async function POST(req: Request) {
     // Read and parse the request body
     const body = await req.json();
     console.log('Request:', body.message);
-
+    const { messages } = body; // Expecting the full message history
+    if (!messages || !Array.isArray(messages)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid or missing message history" }),
+        { status: 400 }
+      );
+    }
+    
     const {message, url} = body;
     // Check if the message is empty
     if (!message) {
@@ -37,8 +44,16 @@ export async function POST(req: Request) {
 
 
     // LLM Response
-    const systemPrompt = 'Be clear and concise, but not as robotic.';
+    const systemPrompt = "You are a helpful AI assistant. Respond concisely while retaining context.";
     const userPrompt = `${message}\n\nScraped Data:\n${scrapedData.map(data => `Source: ${data.link}\nContent: ${data.content}`).join('\n\n')}`;
+
+    // Build the conversation history for the LLM
+    const conversation = [
+      { role: "system", content: systemPrompt },
+      ...messages, // Include all past messages
+      { role: "user", content: userPrompt }, // Add the new user prompt
+    ];
+
     const llmResponse = await client.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
