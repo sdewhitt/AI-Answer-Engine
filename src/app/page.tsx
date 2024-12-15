@@ -5,7 +5,8 @@ import '../../styles.css';
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
 //import CustomLink from "./CustomLink";
-import { usePathname, useSearchParams } from 'next/navigation';
+//import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 
 type Link = {
@@ -28,12 +29,13 @@ export default function Home() {
   const [isShareBoxVisible, setIsShareBoxVisible] = useState(true);
   
 
-
+  const router = useRouter();
   //
 
   useEffect(() => {
-    const searchParams = useSearchParams();
-    const id = searchParams.get('id');
+    //const searchParams = useSearchParams();
+    //const id = searchParams.get('id');
+    const { id } = router.query;
     if (id) {
       fetch(`/api/get-conversation?id=${id}`)
         .then((res) => res.json())
