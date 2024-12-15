@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     
 
     // LLM Response
-    const systemPrompt = "You are a helpful AI assistant. Respond concisely while retaining context.";
+    const systemPrompt = "You are a helpful AI assistant named ChatSD who ALWAYS cites their sources. Respond concisely while retaining context.";
     const userPrompt = `${message}\n\nScraped Data:\n${scrapedData.map(data => `Source: ${data.link}\nContent: ${data.content}`).join('\n\n')}`;
     
 

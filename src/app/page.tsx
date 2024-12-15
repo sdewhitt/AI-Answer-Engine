@@ -109,6 +109,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <h1 className="text-xl font-semibold text-white">ChatSD</h1>
         </div>
+        
       </div>
 
       {/* Messages Container */}
@@ -182,7 +183,7 @@ export default function Home() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-0 w-full bg-gray-950 border-t border-gray-950 p-4">
+      <div className="fixed bottom-0 w-full bg-gray-900 border-t border-gray-950 p-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex gap-3 items-center">
             <input
@@ -191,7 +192,7 @@ export default function Home() {
               onChange={e => setMessage(e.target.value)}
               onKeyPress={e => e.key === "Enter" && handleSend()}
               placeholder="Type your message..."
-              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-gray-400"
+              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent placeholder-gray-400"
             />
             <button
               onClick={handleSend}
@@ -206,15 +207,15 @@ export default function Home() {
 
       {/* Share Link */}
       { (
-        <div className="fixed bottom-20 w-full bg-gray-950 border-t border-gray-700 p-4">
+        <div className="fixed top-1 right-4 space-y-2   p-1 rounded-l">
           <div className="max-w-3xl mx-auto">
-            <button onClick={handleShare} className="bg-violet-900 text-white px-5 py-3 rounded-xl hover:bg-violet-950 transition-all">
-              Generate Link
+            <button onClick={handleShare} className="bg-violet-900 text-white px-3 py-2 rounded-xl hover:bg-violet-950 transition-all">
+              Share
             </button>
             {isShareBoxVisible && shareLink && (
               <div className="mt-4">
-                <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none" />
-                <button onClick={handleCopy} className="bg-violet-900 text-white px-5 py-3 rounded-xl hover:bg-violet-950 transition-all mt-2">
+                <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-2 py-1 text-sm text-gray-100 focus:outline-none" />
+                <button onClick={handleCopy} className="bg-violet-900 text-white px-3 py-2 rounded-xl text-sm hover:bg-violet-950 transition-all mt-2">
                   Copy Link
                 </button>
               </div>
