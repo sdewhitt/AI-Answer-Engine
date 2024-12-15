@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import '../../styles.css';
 import Link from 'next/link';
-import CustomMarkdown from "./CustomMarkdown";
+import CustomMarkdown from "../CustomMarkdown";
 //import CustomLink from "./CustomLink";
-//import { useSearchParams } from 'next/navigation';
+//import {,  useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,7 +30,7 @@ export default function Home() {
   
 
   const router = useRouter();
-  //
+  
 
   useEffect(() => {
     //const searchParams = useSearchParams();
