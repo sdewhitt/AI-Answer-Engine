@@ -25,13 +25,14 @@ export default function Home() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [shareLink, setShareLink] = useState('');
+  const [isShareBoxVisible, setIsShareBoxVisible] = useState(true);
   
 
-
+  const searchParams = useSearchParams();
 
 
   useEffect(() => {
-    const searchParams = useSearchParams();
+    
     const id = searchParams.get('id');
     if (id) {
       fetch(`/api/get-conversation?id=${id}`)
@@ -90,7 +91,7 @@ export default function Home() {
   };
 
 
-  const [isShareBoxVisible, setIsShareBoxVisible] = useState(true);
+  
   const handleCopy = () => {
     navigator.clipboard.writeText(shareLink);
     alert('Link copied to clipboard!');
