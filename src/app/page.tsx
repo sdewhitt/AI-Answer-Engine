@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import '../../styles.css'; // Ensure you import your CSS file
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
 import CustomLink from "./CustomLink";
-
+import { useRouter } from 'next/router';
 
 type Link = {
   summary: string; // The AI-generated summary
@@ -23,6 +23,9 @@ export default function Home() {
     { role: "ai", content: "Hello! How can I help you today?" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [shareLink, setShareLink] = useState('');
+  const router = useRouter();
+
 
   const handleSend = async () => {
     if (!message.trim()) return;
@@ -165,3 +168,5 @@ export default function Home() {
     </div>
   );
 }
+
+
