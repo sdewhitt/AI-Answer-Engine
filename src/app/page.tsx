@@ -39,7 +39,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message }), //body: JSON.stringify({ messages: [...messages, userMessage] }),
       });
 
       // Handle the response from the chat API to display the AI response in the UI
