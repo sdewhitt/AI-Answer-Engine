@@ -5,7 +5,8 @@ import '../../styles.css'; // Ensure you import your CSS file
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
 import CustomLink from "./CustomLink";
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
 type Link = {
   summary: string; // The AI-generated summary
@@ -24,8 +25,18 @@ export default function Home() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [shareLink, setShareLink] = useState('');
-  const router = useRouter();
+  
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id) {
+      fetch(`/api/get-conversation?id=${id}`)
+        .then((res) => res.json())
+        .then((data) => setMessages(data.conversation || []));
+    }
+  }, [searchParams]);
 
   const handleSend = async () => {
     if (!message.trim()) return;
@@ -61,7 +72,24 @@ export default function Home() {
     }
   };
 
+  const handleShare = async () => {
+    const conversationId = uuidv4();
+    await fetch('/api/save-conversation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: conversationId, conversation: messages }),
+    });
+  
+    const link = `${window.location.origin}${window.location.pathname}?id=${conversationId}`;
+    setShareLink(link);
+  };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareLink);
+    alert('Link copied to clipboard!');
+  };
   
   //Tailwind CSS docs: https://tailwindcss.com/docs/customizing-colors, https://tailwindcss.com/docs/hover-focus-and-other-states
   return (
@@ -165,8 +193,25 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+        {/* Share Link */}
+      <div className="fixed bottom-16 w-full bg-gray-800 border-t border-gray-700 p-4">
+        <div className="max-w-3xl mx-auto">
+          <button onClick={handleShare} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all">
+            Generate Shareable Link
+          </button>
+          {shareLink && (
+            <div className="mt-4">
+              <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none" />
+              <button onClick={handleCopy} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all mt-2">
+                Copy Link
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }
-
 
