@@ -8,6 +8,7 @@ Built with Next.js and Typescript to scrape content from websites while mitigati
 - LLM answers user input while considering chat history
 
 ### In-Progress Features
+- Proper Vercel deployment
 - Chat sharing between users
 - Ability to extract content from any kind of URL / data source
-- Data visualization generation
+
