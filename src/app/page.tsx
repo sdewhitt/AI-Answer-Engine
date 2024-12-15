@@ -19,6 +19,7 @@ type Message = {
   links?: Link[];
 };
 
+
 export default function Home() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -96,15 +97,15 @@ export default function Home() {
   
   const handleCopy = () => {
     navigator.clipboard.writeText(shareLink);
-    alert('Link copied to clipboard!');
     setIsShareBoxVisible(false);
+    alert('Link copied to clipboard!');    
   };
   
   //Tailwind CSS docs: https://tailwindcss.com/docs/customizing-colors, https://tailwindcss.com/docs/hover-focus-and-other-states
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex flex-col h-screen bg-gray-950">
       {/* Header */}
-      <div className="w-full bg-gray-800 border-b border-gray-700 p-4">
+      <div className="w-full bg-violet-900 border-b border-violet-950 p-4">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-xl font-semibold text-white">ChatSD</h1>
         </div>
@@ -125,8 +126,8 @@ export default function Home() {
               <div
                 className={`px-4 py-2 rounded-2xl max-w-[80%] ${
                   msg.role === "ai"
-                    ? "bg-violet-950 border border-rose-500 text-gray-100"
-                    : "bg-slate-800 border border-violet-500 text-white ml-auto"
+                    ? "bg-violet-950  border-rose-500 text-gray-100"
+                    : "bg-slate-800  border-violet-500 text-white ml-auto"
                 } custom-font`}
                 //style = {{ borderColor: msg.role === "ai" ? 'rgb(190, 18, 60)' : 'rgb(44, 15, 92)' }}
                 //style={{ whiteSpace: 'pre-wrap' }}
@@ -181,7 +182,7 @@ export default function Home() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-0 w-full bg-gray-800 border-t border-gray-700 p-4">
+      <div className="fixed bottom-0 w-full bg-gray-950 border-t border-gray-950 p-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex gap-3 items-center">
             <input
@@ -195,7 +196,7 @@ export default function Home() {
             <button
               onClick={handleSend}
               disabled={isLoading}
-              className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all disabled:bg-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-violet-900 text-white px-5 py-3 rounded-xl hover:bg-violet-950 transition-all disabled:bg-violet-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Sending..." : "Send"}
             </button>
@@ -204,16 +205,16 @@ export default function Home() {
       </div>
 
       {/* Share Link */}
-      {isShareBoxVisible && (
-        <div className="fixed bottom-20 w-full bg-gray-800 border-t border-gray-700 p-4">
+      { (
+        <div className="fixed bottom-20 w-full bg-gray-950 border-t border-gray-700 p-4">
           <div className="max-w-3xl mx-auto">
-            <button onClick={handleShare} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all">
-              Generate Shareable Link
+            <button onClick={handleShare} className="bg-violet-900 text-white px-5 py-3 rounded-xl hover:bg-violet-950 transition-all">
+              Generate Link
             </button>
-            {shareLink && (
+            {isShareBoxVisible && shareLink && (
               <div className="mt-4">
                 <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none" />
-                <button onClick={handleCopy} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all mt-2">
+                <button onClick={handleCopy} className="bg-violet-900 text-white px-5 py-3 rounded-xl hover:bg-violet-950 transition-all mt-2">
                   Copy Link
                 </button>
               </div>
