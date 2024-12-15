@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import '../../styles.css';
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
-import CustomLink from "./CustomLink";
+//import CustomLink from "./CustomLink";
 import { usePathname, useSearchParams } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 
