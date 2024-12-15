@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
     // Read and parse the request body
     const body = await req.json();
-    console.log('Request body:', body);
+    console.log('Request:', body.message);
 
     const {message, url} = body;
     // Check if the message is empty
