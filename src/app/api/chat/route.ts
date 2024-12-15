@@ -27,25 +27,24 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: 'Message is empty' }), { status: 400 });
     }
 
+    let scrapedData: any[] = [];
     if (url) {
-      // Scrape relevant websites
-      const scrapedData = await scrapeWebsite(url);
-  
-      if (!scrapedData.content) {
-        return new Response(JSON.stringify({ error: 'Failed to extract content from the website' }), { status: 500 });
+      scrapedData = await scrapeTopWebsites(url);
+      if (scrapedData.length === 0) {
+        return new Response(JSON.stringify({ error: 'Failed to extract content from the websites' }), { status: 500 });
       }
-    }
-    else {
+    } else {
       console.log('No URL provided');
     }
 
 
     // LLM Response
-    const systemPrompt = 'Be concise.';
+    const systemPrompt = 'Be clear and concise, but not as robotic.';
+    const userPrompt = `${message}\n\nScraped Data:\n${scrapedData.map(data => `Source: ${data.link}\nContent: ${data.content}`).join('\n\n')}`;
     const llmResponse = await client.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: body.message }
+        { role: 'user', content: userPrompt } // content used to be body.message
       ],
       model: 'llama3-8b-8192',
     });
@@ -65,41 +64,30 @@ export async function POST(req: Request) {
   }
 }
 
-// Function to scrape website content
-async function scrapeWebsite(url: string) {
-  // Launch Puppeteer
-  const browser = await puppeteer.launch({
-    headless: true, // Run in headless mode
-    args: ['--no-sandbox', '--disable-setuid-sandbox'], // Necessary for certain hosting environments
+async function scrapeTopWebsites(query: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
+
+  const links = await page.evaluate(() => {
+    const anchors = Array.from(document.querySelectorAll('a'));
+    return anchors.map(anchor => anchor.href).slice(0, 5);
   });
 
-  try {
-    const page = await browser.newPage();
-
-    // Navigate to the provided URL
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
-
-    // Get the HTML content of the page
-    const html = await page.content();
-
-    // Parse the HTML using Cheerio
-    const $ = cheerio.load(html);
-
-    // Extract the title and main content
-    const title = $('title').text();
-    const content = $('p')
-      .map((i, el) => $(el).text())
-      .get()
-      .join(' ');
-
-    return { title, content };
-  } catch (error) {
-    console.error('Error during web scraping:', error);
-    throw new Error('Failed to scrape website');
-  } finally {
-    await browser.close();
+  const scrapedData = [];
+  for (const link of links) {
+    await page.goto(link);
+    const content = await page.evaluate(() => document.body.innerText);
+    scrapedData.push({ link, content });
   }
+
+  await browser.close();
+  return scrapedData;
 }
+
+
+
+
 
 // Caching
 export const dynamic = 'force-static'
