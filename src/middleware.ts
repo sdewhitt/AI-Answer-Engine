@@ -6,8 +6,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
 const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
+  redis,
   limiter: Ratelimit.slidingWindow(10, "10 s"),
 });
 
@@ -21,7 +27,13 @@ export async function middleware(request: NextRequest) {
 
     if (!success) {
       // If rate limit exceeded, return a 429 response
-      return new NextResponse("Too Many Requests", { status: 429 });
+      const customResponse = {
+        message: "**You have submitted too many requests. Please wait a moment and try again.**",
+      };
+      return new NextResponse(JSON.stringify(customResponse), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // If rate limit not exceeded, proceed with the request
@@ -29,8 +41,8 @@ export async function middleware(request: NextRequest) {
 
 
   } catch (error) {
-
-
+    console.error("Rate limiting error:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
