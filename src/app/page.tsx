@@ -7,6 +7,10 @@ import '../../styles.css'; // Ensure you import your CSS file
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
 
+type CustomLinkProps = {
+  defaultText?: string;
+  defaultUrl?: string;
+};
 
 type Message = {
   role: "user" | "ai";
@@ -84,7 +88,7 @@ export default function Home() {
                     ? "bg-blue-950 border border-gray-700 text-gray-100"
                     : "bg-cyan-600 text-white ml-auto"
                 } custom-font`}
-                style={{ whiteSpace: 'pre-wrap' }}
+                //style={{ whiteSpace: 'pre-wrap' }}
               >
                 {msg.role === 'ai' ? (
                   <CustomMarkdown content={msg.content} />

@@ -1,6 +1,120 @@
+
+/* ============== CUSTOM FONTS ================ */
 /*@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');*/
 .custom-font {
     font-family: 'Inter', sans-serif; /* Replace 'YourFontFamily' with the desired font family */
     font-size: 18px; /* Adjust the font size as needed */
     font-weight: normal; /* Adjust the font weight as needed */
   }
+
+
+
+/* ============= REACT MARKDOWN ============== */
+
+/* Base Markdown styling */
+.markdown {
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e5e7eb; /* Light text color */
+  word-wrap: break-word;
+}
+
+/* Headings */
+.markdown h1 {
+  font-size: 1.875rem; /* 30px */
+  font-weight: bold;
+  margin: 1rem 0;
+  color: #ffffff; /* White */
+}
+.markdown h2 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: bold;
+  margin: 1rem 0;
+  color: #ffffff;
+}
+.markdown h3 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: bold;
+  margin: 1rem 0;
+  color: #d1d5db; /* Lighter text */
+}
+
+/* Paragraphs */
+.markdown p {
+  margin: 0.5rem 0;
+  color: #e5e7eb;
+}
+
+/* Links */
+.markdown a {
+  color: #38bdf8; /* Cyan */
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+.markdown a:hover {
+  color: #67e8f9; /* Lighter Cyan */
+}
+
+/* Lists */
+.markdown ul {
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}
+.markdown ol {
+  margin-left: 1.5rem;
+  list-style-type: decimal;
+}
+.markdown li {
+  margin: 0.5rem 0;
+}
+
+/* Code blocks */
+.markdown pre {
+  background: #1f2937; /* Darker background */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+.markdown code {
+  font-family: 'Source Code Pro', monospace;
+  background: #374151; /* Slightly lighter background */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  color: #d1fae5; /* Soft green */
+}
+
+/* Blockquotes */
+.markdown blockquote {
+  border-left: 4px solid #38bdf8;
+  padding-left: 1rem;
+  margin: 0.5rem 0;
+  color: #9ca3af; /* Light gray */
+  font-style: italic;
+}
+
+/* Tables */
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+.markdown th,
+.markdown td {
+  border: 1px solid #374151;
+  padding: 0.5rem 1rem;
+}
+.markdown th {
+  background: #1f2937; /* Darker header */
+  color: #e5e7eb; /* Light text */
+}
+.markdown td {
+  background: #111827; /* Dark table body */
+  color: #e5e7eb;
+}
+
+/* Images */
+.markdown img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
