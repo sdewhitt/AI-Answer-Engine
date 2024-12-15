@@ -27,8 +27,9 @@ export default function Home() {
   const [shareLink, setShareLink] = useState('');
   
 
-  const searchParams = useSearchParams();
 
+
+  const searchParams = useSearchParams();
   useEffect(() => {
     const id = searchParams.get('id');
     if (id) {
@@ -84,11 +85,15 @@ export default function Home() {
   
     const link = `${window.location.origin}${window.location.pathname}?id=${conversationId}`;
     setShareLink(link);
+    setIsShareBoxVisible(true);
   };
 
+
+  const [isShareBoxVisible, setIsShareBoxVisible] = useState(true);
   const handleCopy = () => {
     navigator.clipboard.writeText(shareLink);
     alert('Link copied to clipboard!');
+    setIsShareBoxVisible(false);
   };
   
   //Tailwind CSS docs: https://tailwindcss.com/docs/customizing-colors, https://tailwindcss.com/docs/hover-focus-and-other-states
@@ -194,22 +199,24 @@ export default function Home() {
         </div>
       </div>
 
-        {/* Share Link */}
-      <div className="fixed bottom-16 w-full bg-gray-800 border-t border-gray-700 p-4">
-        <div className="max-w-3xl mx-auto">
-          <button onClick={handleShare} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all">
-            Generate Shareable Link
-          </button>
-          {shareLink && (
-            <div className="mt-4">
-              <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none" />
-              <button onClick={handleCopy} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all mt-2">
-                Copy Link
-              </button>
-            </div>
-          )}
+      {/* Share Link */}
+      {isShareBoxVisible && (
+        <div className="fixed bottom-20 w-full bg-gray-800 border-t border-gray-700 p-4">
+          <div className="max-w-3xl mx-auto">
+            <button onClick={handleShare} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all">
+              Generate Shareable Link
+            </button>
+            {shareLink && (
+              <div className="mt-4">
+                <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none" />
+                <button onClick={handleCopy} className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all mt-2">
+                  Copy Link
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
     </div>
   );
