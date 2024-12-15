@@ -1,20 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from "remark-gfm";
 import '../../styles.css'; // Ensure you import your CSS file
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
+import CustomLink from "./CustomLink";
 
-type CustomLinkProps = {
-  defaultText?: string;
-  defaultUrl?: string;
+
+type Link = {
+  summary: string; // The AI-generated summary
+  url: string;     // The corresponding hyperlink
 };
-
 type Message = {
   role: "user" | "ai";
   content: string;
+  links?: Link[];
 };
 
 export default function Home() {
@@ -91,7 +91,25 @@ export default function Home() {
                 //style={{ whiteSpace: 'pre-wrap' }}
               >
                 {msg.role === 'ai' ? (
-                  <CustomMarkdown content={msg.content} />
+                  <>
+                    <CustomMarkdown content={msg.content} />
+                    {msg.links && msg.links.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {msg.links.map((link, i) => (
+                          <div key={i}>
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 underline hover:text-blue-500"
+                            >
+                              {link.summary}
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <p>{msg.content}</p>
                 )}

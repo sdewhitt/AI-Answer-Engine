@@ -33,8 +33,6 @@ export async function POST(req: Request) {
       if (scrapedData.length === 0) {
         return new Response(JSON.stringify({ error: 'Failed to extract content from the websites' }), { status: 500 });
       }
-    } else {
-      console.log('No URL provided');
     }
 
 
@@ -53,6 +51,9 @@ export async function POST(req: Request) {
     response = response ? response.trim() : '';
 
     console.log('Chat completion:', response);
+
+    // Parse links and replace them with summaries
+    //const processedResponse = await replaceLinksWithSummaries(response);
 
     return new Response(JSON.stringify({ message: response }), {
       status: 200,
@@ -85,9 +86,51 @@ async function scrapeTopWebsites(query: string) {
   return scrapedData;
 }
 
+// The below 2 functions are used to customize the hyperlinks in the LLM response for appearance sakes.
+/*
+// Replace links in the response with summaries
+async function replaceLinksWithSummaries(response: string) {
+  // Regex to extract links
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+  const matches = response.match(linkRegex);
 
+  if (!matches) return response; // No links found
 
+  const replacements = await Promise.all(
+    matches.map(async (url) => {
+      const summary = await getSummaryForLink(url); // Summarize the link
+      return { url, replacement: `[${summary}](${url})` };
+    })
+  );
 
+  // Replace links in the original response with Markdown
+  let processedResponse = response;
+  replacements.forEach(({ url, replacement }) => {
+    processedResponse = processedResponse.replace(url, replacement);
+  });
+
+  return processedResponse;
+}
+
+// Summarize the link
+async function getSummaryForLink(url: string): Promise<string> {
+  try {
+    // Fetch and scrape the link
+    const res = await fetch(url);
+    const html = await res.text();
+    const $ = cheerio.load(html);
+
+    // Example: Use the page title or meta description as a summary
+    const title = $("title").text();
+    const metaDescription = $('meta[name="description"]').attr("content");
+
+    return title || metaDescription || "Visit this link for more details.";
+  } catch (error) {
+    console.error(`Failed to summarize link: ${url}`, error);
+    return "Summary not available";
+  }
+}
+*/
 
 // Caching
 export const dynamic = 'force-static'

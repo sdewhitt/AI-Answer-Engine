@@ -118,3 +118,60 @@
   max-width: 100%;
   border-radius: 0.5rem;
 }
+
+
+/* ============= CUSTOM HYPERLINKS =============== */
+.custom-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.custom-link .editor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.custom-link input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+.custom-link a {
+  color: #2563eb; /* Blue link */
+  text-decoration: underline;
+}
+.custom-link a:hover {
+  color: #1d4ed8; /* Darker blue on hover */
+}
+
+.text-blue-400 {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+.text-blue-400:hover {
+  color: #67e8f9;
+}
+
+.border {
+  border: 1px solid #374151;
+}
+
+.rounded {
+  border-radius: 0.5rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
