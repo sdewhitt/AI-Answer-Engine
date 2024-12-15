@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import '../../styles.css'; // Ensure you import your CSS file
+import '../../styles.css';
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
 import CustomLink from "./CustomLink";
