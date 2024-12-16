@@ -4,7 +4,7 @@ Built with Next.js and Typescript to scrape content from websites while mitigati
 
 ### Features
 - Users can paste in a set of URLs and get a response back with the context of all the URLs through an LLM
-- Users can Ask a question and get an answer with sources cited
+- Users can ask a question and get an answer with sources cited
 - LLM answers user input while considering chat history
 
 ### In-Progress Features
