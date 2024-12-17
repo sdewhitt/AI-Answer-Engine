@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import '../../styles.css'; // Ensure you import your CSS file
+import { useState, useEffect } from "react";
+import '../../styles.css';
 import Link from 'next/link';
 import CustomMarkdown from "./CustomMarkdown";
-import CustomLink from "./CustomLink";
-
+//import CustomLink from "./CustomLink";
+import {useSearchParams } from 'next/navigation';
+//import { useRouter } from 'next/router';
+import { v4 as uuidv4 } from 'uuid';
 
 type Link = {
   summary: string; // The AI-generated summary
@@ -17,12 +19,30 @@ type Message = {
   links?: Link[];
 };
 
+
 export default function Home() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     { role: "ai", content: "Hello! How can I help you today?" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [shareLink, setShareLink] = useState('');
+  const [isShareBoxVisible, setIsShareBoxVisible] = useState(true);
+  
+
+  //const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    
+    const id = searchParams.get('id');
+    //const { id } = router.query;
+    if (id) {
+      fetch(`/api/get-conversation?id=${id}`)
+        .then((res) => res.json())
+        .then((data) => setMessages(data.conversation || []));
+    }
+  }, []);
 
   const handleSend = async () => {
     if (!message.trim()) return;
@@ -39,7 +59,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }), //body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ messages: [...messages, userMessage] }), //body: JSON.stringify({ message }), //
       });
 
       // Handle the response from the chat API to display the AI response in the UI
@@ -58,16 +78,38 @@ export default function Home() {
     }
   };
 
+  const handleShare = async () => {
+    const conversationId = uuidv4();
+    await fetch('/api/save-conversation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: conversationId, conversation: messages }),
+    });
+  
+    const link = `${window.location.origin}${window.location.pathname}?id=${conversationId}`;
+    setShareLink(link);
+    setIsShareBoxVisible(true);
+  };
 
-  // TODO: Modify the color schemes, fonts, and UI as needed for a good user experience
-  // Refer to the Tailwind CSS docs here: https://tailwindcss.com/docs/customizing-colors, and here: https://tailwindcss.com/docs/hover-focus-and-other-states
+
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareLink);
+    setIsShareBoxVisible(false);
+    alert('Link copied to clipboard!');    
+  };
+  
+  //Tailwind CSS docs: https://tailwindcss.com/docs/customizing-colors, https://tailwindcss.com/docs/hover-focus-and-other-states
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex flex-col h-screen bg-gray-950">
       {/* Header */}
-      <div className="w-full bg-gray-800 border-b border-gray-700 p-4">
+      <div className="w-full bg-violet-900 border-b border-violet-950 p-4">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-xl font-semibold text-white">ChatSD</h1>
         </div>
+        
       </div>
 
       {/* Messages Container */}
@@ -85,14 +127,15 @@ export default function Home() {
               <div
                 className={`px-4 py-2 rounded-2xl max-w-[80%] ${
                   msg.role === "ai"
-                    ? "bg-blue-950 border border-gray-700 text-gray-100"
-                    : "bg-cyan-600 text-white ml-auto"
+                    ? "bg-violet-950  border-rose-500 text-gray-100"
+                    : "bg-slate-800  border-violet-500 text-white ml-auto"
                 } custom-font`}
+                //style = {{ borderColor: msg.role === "ai" ? 'rgb(190, 18, 60)' : 'rgb(44, 15, 92)' }}
                 //style={{ whiteSpace: 'pre-wrap' }}
               >
                 {msg.role === 'ai' ? (
                   <>
-                    <CustomMarkdown content={msg.content} />
+                    <CustomMarkdown content={msg.content || "No content available"} />
                     {msg.links && msg.links.length > 0 && (
                       <div className="mt-4 space-y-2">
                         {msg.links.map((link, i) => (
@@ -140,7 +183,7 @@ export default function Home() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-0 w-full bg-gray-800 border-t border-gray-700 p-4">
+      <div className="fixed bottom-0 w-full bg-gray-900 border-t border-gray-950 p-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex gap-3 items-center">
             <input
@@ -149,18 +192,39 @@ export default function Home() {
               onChange={e => setMessage(e.target.value)}
               onKeyPress={e => e.key === "Enter" && handleSend()}
               placeholder="Type your message..."
-              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-gray-400"
+              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent placeholder-gray-400"
             />
             <button
               onClick={handleSend}
               disabled={isLoading}
-              className="bg-cyan-600 text-white px-5 py-3 rounded-xl hover:bg-cyan-700 transition-all disabled:bg-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-violet-900 text-white px-5 py-3 rounded-xl hover:bg-violet-950 transition-all disabled:bg-violet-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Sending..." : "Send"}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Share Link */}
+      { (
+        <div className="fixed top-1 right-4 space-y-2   p-1 rounded-l">
+          <div className="max-w-3xl mx-auto">
+            <button onClick={handleShare} className="bg-violet-900 text-white px-3 py-2 rounded-xl hover:bg-violet-950 transition-all">
+              Share
+            </button>
+            {isShareBoxVisible && shareLink && (
+              <div className="mt-4">
+                <input type="text" value={shareLink} readOnly className="w-full rounded-xl border border-gray-700 bg-gray-900 px-2 py-1 text-sm text-gray-100 focus:outline-none" />
+                <button onClick={handleCopy} className="bg-violet-900 text-white px-3 py-2 rounded-xl text-sm hover:bg-violet-950 transition-all mt-2">
+                  Copy Link
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+

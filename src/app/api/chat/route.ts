@@ -1,12 +1,7 @@
-// TODO: Implement the chat API with Groq and web scraping with Cheerio and Puppeteer
-// Refer to the Next.js Docs on how to read the Request body: https://nextjs.org/docs/app/building-your-application/routing/route-handlers
-// Refer to the Groq SDK here on how to use an LLM: https://www.npmjs.com/package/groq-sdk
-// Refer to the Cheerio docs here on how to parse HTML: https://cheerio.js.org/docs/basics/loading
-// Refer to Puppeteer docs here: https://pptr.dev/guides/what-is-puppeteer
-
 import Groq from 'groq-sdk';
 import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
+
 
 
 const client = new Groq({
@@ -19,23 +14,45 @@ export async function POST(req: Request) {
 
     // Read and parse the request body
     const body = await req.json();
-    console.log('Request:', body.message);
-    /*const { messages } = body; // Expecting the full message history
+
+    const { messages,} = body; // Expecting the full message history
+    //console.log('Messages:', messages);
+
     if (!messages || !Array.isArray(messages)) {
       return new Response(
         JSON.stringify({ error: "Invalid or missing message history" }),
         { status: 400 }
       );
-    }*/
-    
-    const {message, url} = body;
+    }
+
+    // Validate each message
+    for (const msg of messages) {
+      if (!msg.role || (msg.role !== 'user' && msg.role !== 'ai' && msg.role !== 'system' && msg.role !== 'assistant')) {
+        return new Response(
+          JSON.stringify({ error: `Invalid role in message: ${JSON.stringify(msg)}` }),
+          { status: 400 }
+        );
+      }
+    }
+
+    // Get the latest message
+    const message = messages[messages.length - 1].content;
+    console.log('Message:', message);
+
     // Check if the message is empty
     if (!message) {
       return new Response(JSON.stringify({ error: 'Message is empty' }), { status: 400 });
     }
 
+    
+    // Check if the message contains a URL
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = message.match(urlRegex);
     let scrapedData: any[] = [];
-    if (url) {
+
+    if (urls && urls.length > 0) {
+      // If URLs are found, scrape the first URL
+      const url = urls[0];
       scrapedData = await scrapeTopWebsites(url);
       if (scrapedData.length === 0) {
         return new Response(JSON.stringify({ error: 'Failed to extract content from the websites' }), { status: 500 });
@@ -43,24 +60,29 @@ export async function POST(req: Request) {
     }
 
 
+    
+
     // LLM Response
-    const systemPrompt = "You are a helpful AI assistant. Respond concisely while retaining context.";
+    const systemPrompt = "You are a helpful AI assistant named ChatSD who ALWAYS cites their sources. Respond concisely while retaining context.";
     const userPrompt = `${message}\n\nScraped Data:\n${scrapedData.map(data => `Source: ${data.link}\nContent: ${data.content}`).join('\n\n')}`;
+    
+
+    // Create a list of messages with role 'user'
+    const userMessages = messages.filter(msg => msg.role === 'user');
+    //console.log('User Messages:', userMessages);
 
     // Build the conversation history for the LLM
     const conversation = [
-      { role: "system", content: systemPrompt },
-      //...messages, // Include all past messages
+      { role: "system", content: systemPrompt }, ...userMessages, // Include all past messages
       { role: "user", content: userPrompt }, // Add the new user prompt
     ];
 
+
     const llmResponse = await client.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt } // content used to be body.message
-      ],
+      messages: conversation,
       model: 'llama3-8b-8192',
     });
+
 
     let response = llmResponse.choices[0].message.content;
     response = response ? response.trim() : '';
@@ -102,7 +124,7 @@ async function scrapeTopWebsites(query: string) {
 }
 
 // The below 2 functions are used to customize the hyperlinks in the LLM response for appearance sakes.
-/*
+
 // Replace links in the response with summaries
 async function replaceLinksWithSummaries(response: string) {
   // Regex to extract links
@@ -145,7 +167,7 @@ async function getSummaryForLink(url: string): Promise<string> {
     return "Summary not available";
   }
 }
-*/
+
 
 // Caching
 export const dynamic = 'force-static'
